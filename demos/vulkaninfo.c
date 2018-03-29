@@ -713,11 +713,12 @@ static void AppCreateInstance(struct AppInstance *inst) {
 
     //---Build a list of extensions to load---
 
-    const char *info_instance_extensions[] = {VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
-                                              VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME,
-                                              VK_KHR_SURFACE_EXTENSION_NAME,
+    const char *info_instance_extensions[] = {VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME,
+                                              VK_KHR_DISPLAY_EXTENSION_NAME,
+                                              VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
                                               VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME,
                                               VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME,
+                                              VK_KHR_SURFACE_EXTENSION_NAME,
 #ifdef VK_USE_PLATFORM_WIN32_KHR
                                               VK_KHR_WIN32_SURFACE_EXTENSION_NAME
 #elif VK_USE_PLATFORM_XCB_KHR
