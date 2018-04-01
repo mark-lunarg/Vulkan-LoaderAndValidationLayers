@@ -415,7 +415,7 @@ static bool ValidateMemoryIsValid(layer_data *dev_data, VkDeviceMemory mem, uint
     if (mem_info) {
         if (!mem_info->bound_ranges[bound_object_handle].valid) {
             return log_msg(dev_data->report_data, VK_DEBUG_REPORT_WARNING_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                           HandleToUint64(mem), MEMTRACK_INVALID_MEM_REGION, "MEM",
+                           HandleToUint64(mem), MEMTRACK_INVALID_MEM_REGION,
                            "%s: Cannot read invalid region of memory allocation 0x%" PRIx64 " for bound %s object 0x%" PRIx64
                            ", please fill the memory before using.",
                            functionName, HandleToUint64(mem), object_string[type], bound_object_handle);
@@ -430,7 +430,7 @@ bool ValidateImageMemoryIsValid(layer_data *dev_data, IMAGE_STATE *image_state, 
     if (image_state->binding.mem == MEMTRACKER_SWAP_CHAIN_IMAGE_KEY) {
         if (!image_state->valid) {
             return log_msg(dev_data->report_data, VK_DEBUG_REPORT_WARNING_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                           HandleToUint64(image_state->binding.mem), MEMTRACK_INVALID_MEM_REGION, "MEM",
+                           HandleToUint64(image_state->binding.mem), MEMTRACK_INVALID_MEM_REGION,
                            "%s: Cannot read invalid swapchain image 0x%" PRIx64 ", please fill the memory before using.",
                            functionName, HandleToUint64(image_state->image));
         }
@@ -581,12 +581,12 @@ bool VerifyBoundMemoryIsValid(const layer_data *dev_data, VkDeviceMemory mem, ui
     bool result = false;
     if (VK_NULL_HANDLE == mem) {
         result = log_msg(
-            dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, handle, error_code, "MEM",
+            dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, handle, error_code,
             "%s: Vk%s object 0x%" PRIx64 " used with no memory bound. Memory should be bound by calling vkBind%sMemory().",
             api_name, type_name, handle, type_name);
     } else if (MEMORY_UNBOUND == mem) {
         result = log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, handle,
-                         error_code, "MEM",
+                         error_code,
                          "%s: Vk%s object 0x%" PRIx64
                          " used with no memory bound and previously bound memory was freed. Memory must not be freed prior to this "
                          "operation.",
@@ -670,7 +670,7 @@ static bool ValidateSetMemBinding(layer_data *dev_data, VkDeviceMemory mem, uint
                 assert(type == kVulkanObjectTypeImage);
             }
             skip |= log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                            HandleToUint64(mem), error_code, "MEM",
+                            HandleToUint64(mem), error_code,
                             "In %s, attempting to bind memory (0x%" PRIx64 ") to object (0x%" PRIx64
                             ") which was created with sparse memory flags (VK_%s_CREATE_SPARSE_*_BIT).",
                             apiName, HandleToUint64(mem), handle, handle_type);
@@ -686,13 +686,13 @@ static bool ValidateSetMemBinding(layer_data *dev_data, VkDeviceMemory mem, uint
                     assert(type == kVulkanObjectTypeImage);
                 }
                 skip |= log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                                HandleToUint64(mem), error_code, "MEM",
+                                HandleToUint64(mem), error_code,
                                 "In %s, attempting to bind memory (0x%" PRIx64 ") to object (0x%" PRIx64
                                 ") which has already been bound to mem object 0x%" PRIx64 ".",
                                 apiName, HandleToUint64(mem), handle, HandleToUint64(prev_binding->mem));
             } else if (mem_binding->binding.mem == MEMORY_UNBOUND) {
                 skip |= log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                                HandleToUint64(mem), MEMTRACK_REBIND_OBJECT, "MEM",
+                                HandleToUint64(mem), MEMTRACK_REBIND_OBJECT,
                                 "In %s, attempting to bind memory (0x%" PRIx64 ") to object (0x%" PRIx64
                                 ") which was previous bound to memory that has since been freed. Memory bindings are immutable in "
                                 "Vulkan so this attempt to bind to new memory is not allowed.",
@@ -2741,7 +2741,7 @@ static bool ValidateFenceForSubmit(layer_data *dev_data, FENCE_NODE *pFence) {
         else if (pFence->state == FENCE_RETIRED) {
             // TODO: opportunities for VALIDATION_ERROR_31a0007e, VALIDATION_ERROR_316008b2, VALIDATION_ERROR_16400a0e
             skip |= log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT,
-                            HandleToUint64(pFence->fence), MEMTRACK_INVALID_FENCE_STATE, "MEM",
+                            HandleToUint64(pFence->fence), MEMTRACK_INVALID_FENCE_STATE,
                             "Fence 0x%" PRIx64 " submitted in SIGNALED state.  Fences must be reset before being submitted",
                             HandleToUint64(pFence->fence));
         }
@@ -2960,7 +2960,7 @@ static bool PreCallValidateAllocateMemory(layer_data *dev_data) {
     bool skip = false;
     if (dev_data->memObjMap.size() >= dev_data->phys_dev_properties.properties.limits.maxMemoryAllocationCount) {
         skip |= log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT,
-                        HandleToUint64(dev_data->device), VALIDATION_ERROR_UNDEFINED, "MEM",
+                        HandleToUint64(dev_data->device), VALIDATION_ERROR_UNDEFINED,
                         "Number of currently valid memory objects is not less than the maximum allowed (%u).",
                         dev_data->phys_dev_properties.properties.limits.maxMemoryAllocationCount);
     }
@@ -3018,7 +3018,7 @@ static void PostCallRecordFreeMemory(layer_data *dev_data, VkDeviceMemory mem, D
     // Clear mem binding for any bound objects
     for (auto obj : mem_info->obj_bindings) {
         log_msg(dev_data->report_data, VK_DEBUG_REPORT_INFORMATION_BIT_EXT, get_debug_report_enum[obj.type], obj.handle,
-                MEMTRACK_FREED_MEM_REF, "MEM", "VK Object 0x%" PRIx64 " still has a reference to mem obj 0x%" PRIx64,
+                MEMTRACK_FREED_MEM_REF, "VK Object 0x%" PRIx64 " still has a reference to mem obj 0x%" PRIx64,
                 HandleToUint64(obj.handle), HandleToUint64(mem_info->mem));
         BINDABLE *bindable_state = nullptr;
         switch (obj.type) {
@@ -3068,7 +3068,7 @@ static bool ValidateMapMemRange(layer_data *dev_data, VkDeviceMemory mem, VkDevi
     if (size == 0) {
         skip =
             log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                    HandleToUint64(mem), MEMTRACK_INVALID_MAP, "MEM", "VkMapMemory: Attempting to map memory range of size zero");
+                    HandleToUint64(mem), MEMTRACK_INVALID_MAP, "VkMapMemory: Attempting to map memory range of size zero");
     }
 
     auto mem_element = dev_data->memObjMap.find(mem);
@@ -3077,7 +3077,7 @@ static bool ValidateMapMemRange(layer_data *dev_data, VkDeviceMemory mem, VkDevi
         // It is an application error to call VkMapMemory on an object that is already mapped
         if (mem_info->mem_range.size != 0) {
             skip = log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                           HandleToUint64(mem), MEMTRACK_INVALID_MAP, "MEM",
+                           HandleToUint64(mem), MEMTRACK_INVALID_MAP,
                            "VkMapMemory: Attempting to map memory on an already-mapped object 0x%" PRIx64, HandleToUint64(mem));
         }
 
@@ -3085,7 +3085,7 @@ static bool ValidateMapMemRange(layer_data *dev_data, VkDeviceMemory mem, VkDevi
         if (size == VK_WHOLE_SIZE) {
             if (offset >= mem_info->alloc_info.allocationSize) {
                 skip = log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                               HandleToUint64(mem), MEMTRACK_INVALID_MAP, "MEM",
+                               HandleToUint64(mem), MEMTRACK_INVALID_MAP,
                                "Mapping Memory from 0x%" PRIx64 " to 0x%" PRIx64
                                " with size of VK_WHOLE_SIZE oversteps total array size 0x%" PRIx64,
                                offset, mem_info->alloc_info.allocationSize, mem_info->alloc_info.allocationSize);
@@ -3093,7 +3093,7 @@ static bool ValidateMapMemRange(layer_data *dev_data, VkDeviceMemory mem, VkDevi
         } else {
             if ((offset + size) > mem_info->alloc_info.allocationSize) {
                 skip = log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                               HandleToUint64(mem), VALIDATION_ERROR_31200552, "MEM",
+                               HandleToUint64(mem), VALIDATION_ERROR_31200552,
                                "Mapping Memory from 0x%" PRIx64 " to 0x%" PRIx64 " oversteps total array size 0x%" PRIx64 ".",
                                offset, size + offset, mem_info->alloc_info.allocationSize);
             }
@@ -3117,7 +3117,7 @@ static bool deleteMemRanges(layer_data *dev_data, VkDeviceMemory mem) {
         if (!mem_info->mem_range.size) {
             // Valid Usage: memory must currently be mapped
             skip = log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                           HandleToUint64(mem), VALIDATION_ERROR_33600562, "MEM",
+                           HandleToUint64(mem), VALIDATION_ERROR_33600562,
                            "Unmapping Memory without memory being mapped: mem obj 0x%" PRIx64 ".", HandleToUint64(mem));
         }
         mem_info->mem_range.size = 0;
@@ -3181,7 +3181,7 @@ static inline bool verifyWaitFenceState(layer_data *dev_data, VkFence fence, con
         if (pFence->state == FENCE_UNSIGNALED) {
             skip |=
                 log_msg(dev_data->report_data, VK_DEBUG_REPORT_WARNING_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT,
-                        HandleToUint64(fence), MEMTRACK_INVALID_FENCE_STATE, "MEM",
+                        HandleToUint64(fence), MEMTRACK_INVALID_FENCE_STATE,
                         "%s called for fence 0x%" PRIx64 " which has not been submitted on a Queue or during acquire next image.",
                         apiCall, HandleToUint64(fence));
         }
@@ -3610,7 +3610,7 @@ static bool rangesIntersect(layer_data const *dev_data, MEMORY_RANGE const *rang
         const char *r2_type_str = range2->image ? "image" : "buffer";
         auto obj_type = range1->image ? VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT : VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT;
         *skip |= log_msg(
-            dev_data->report_data, VK_DEBUG_REPORT_WARNING_BIT_EXT, obj_type, range1->handle, MEMTRACK_INVALID_ALIASING, "MEM",
+            dev_data->report_data, VK_DEBUG_REPORT_WARNING_BIT_EXT, obj_type, range1->handle, MEMTRACK_INVALID_ALIASING,
             "%s %s 0x%" PRIx64 " is aliased with %s %s 0x%" PRIx64
             " which may indicate a bug. For further info refer to the Buffer-Image Granularity section of the Vulkan "
             "specification. "
@@ -3676,7 +3676,7 @@ static bool ValidateInsertMemoryRange(layer_data const *dev_data, uint64_t handl
     if (memoryOffset >= mem_info->alloc_info.allocationSize) {
         UNIQUE_VALIDATION_ERROR_CODE error_code = is_image ? VALIDATION_ERROR_1740082c : VALIDATION_ERROR_1700080e;
         skip = log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                       HandleToUint64(mem_info->mem), error_code, "MEM",
+                       HandleToUint64(mem_info->mem), error_code,
                        "In %s, attempting to bind memory (0x%" PRIx64 ") to object (0x%" PRIx64 "), memoryOffset=0x%" PRIxLEAST64
                        " must be less than the memory allocation size 0x%" PRIxLEAST64 ".",
                        api_name, HandleToUint64(mem_info->mem), HandleToUint64(handle), memoryOffset,
@@ -5741,7 +5741,7 @@ VKAPI_ATTR VkResult VKAPI_CALL BeginCommandBuffer(VkCommandBuffer commandBuffer,
         // This implicitly resets the Cmd Buffer so make sure any fence is done and then clear memory references
         if (cb_node->in_use.load()) {
             skip |= log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT,
-                            HandleToUint64(commandBuffer), VALIDATION_ERROR_16e00062, "MEM",
+                            HandleToUint64(commandBuffer), VALIDATION_ERROR_16e00062,
                             "Calling vkBeginCommandBuffer() on active command buffer %" PRIx64
                             " before it has completed. You must check command buffer fence before this call.",
                             HandleToUint64(commandBuffer));
@@ -9468,7 +9468,7 @@ VKAPI_ATTR VkResult VKAPI_CALL MapMemory(VkDevice device, VkDeviceMemory mem, Vk
         if ((dev_data->phys_dev_mem_props.memoryTypes[mem_info->alloc_info.memoryTypeIndex].propertyFlags &
              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == 0) {
             skip = log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                           HandleToUint64(mem), VALIDATION_ERROR_31200554, "MEM",
+                           HandleToUint64(mem), VALIDATION_ERROR_31200554,
                            "Mapping Memory without VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT set: mem obj 0x%" PRIx64 ".",
                            HandleToUint64(mem));
         }
@@ -9511,7 +9511,7 @@ static bool validateMemoryIsMapped(layer_data *dev_data, const char *funcName, u
                 if (mem_info->mem_range.offset > pMemRanges[i].offset) {
                     skip |= log_msg(
                         dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                        HandleToUint64(pMemRanges[i].memory), VALIDATION_ERROR_0c20055c, "MEM",
+                        HandleToUint64(pMemRanges[i].memory), VALIDATION_ERROR_0c20055c,
                         "%s: Flush/Invalidate offset (" PRINTF_SIZE_T_SPECIFIER
                         ") is less than Memory Object's offset (" PRINTF_SIZE_T_SPECIFIER ").",
                         funcName, static_cast<size_t>(pMemRanges[i].offset), static_cast<size_t>(mem_info->mem_range.offset));
@@ -9524,7 +9524,7 @@ static bool validateMemoryIsMapped(layer_data *dev_data, const char *funcName, u
                     (data_end < (pMemRanges[i].offset + pMemRanges[i].size))) {
                     skip |=
                         log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                                HandleToUint64(pMemRanges[i].memory), VALIDATION_ERROR_0c20055a, "MEM",
+                                HandleToUint64(pMemRanges[i].memory), VALIDATION_ERROR_0c20055a,
                                 "%s: Flush/Invalidate size or offset (" PRINTF_SIZE_T_SPECIFIER ", " PRINTF_SIZE_T_SPECIFIER
                                 ") exceed the Memory Object's upper-bound (" PRINTF_SIZE_T_SPECIFIER ").",
                                 funcName, static_cast<size_t>(pMemRanges[i].offset + pMemRanges[i].size),
@@ -9551,7 +9551,7 @@ static bool ValidateAndCopyNoncoherentMemoryToDriver(layer_data *dev_data, uint3
                     if (data[j] != NoncoherentMemoryFillValue) {
                         skip |= log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT,
                                         VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT, HandleToUint64(mem_ranges[i].memory),
-                                        MEMTRACK_INVALID_MAP, "MEM", "Memory underflow was detected on mem obj 0x%" PRIx64,
+                                        MEMTRACK_INVALID_MAP, "Memory underflow was detected on mem obj 0x%" PRIx64,
                                         HandleToUint64(mem_ranges[i].memory));
                     }
                 }
@@ -9559,7 +9559,7 @@ static bool ValidateAndCopyNoncoherentMemoryToDriver(layer_data *dev_data, uint3
                     if (data[j] != NoncoherentMemoryFillValue) {
                         skip |= log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT,
                                         VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT, HandleToUint64(mem_ranges[i].memory),
-                                        MEMTRACK_INVALID_MAP, "MEM", "Memory overflow was detected on mem obj 0x%" PRIx64,
+                                        MEMTRACK_INVALID_MAP, "Memory overflow was detected on mem obj 0x%" PRIx64,
                                         HandleToUint64(mem_ranges[i].memory));
                     }
                 }
@@ -9590,14 +9590,14 @@ static bool ValidateMappedMemoryRangeDeviceLimits(layer_data *dev_data, const ch
         uint64_t atom_size = dev_data->phys_dev_properties.properties.limits.nonCoherentAtomSize;
         if (SafeModulo(mem_ranges[i].offset, atom_size) != 0) {
             skip |= log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                            HandleToUint64(mem_ranges->memory), VALIDATION_ERROR_0c20055e, "MEM",
+                            HandleToUint64(mem_ranges->memory), VALIDATION_ERROR_0c20055e,
                             "%s: Offset in pMemRanges[%d] is 0x%" PRIxLEAST64
                             ", which is not a multiple of VkPhysicalDeviceLimits::nonCoherentAtomSize (0x%" PRIxLEAST64 ").",
                             func_name, i, mem_ranges[i].offset, atom_size);
         }
         if ((mem_ranges[i].size != VK_WHOLE_SIZE) && (SafeModulo(mem_ranges[i].size, atom_size) != 0)) {
             skip |= log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                            HandleToUint64(mem_ranges->memory), VALIDATION_ERROR_0c200adc, "MEM",
+                            HandleToUint64(mem_ranges->memory), VALIDATION_ERROR_0c200adc,
                             "%s: Size in pMemRanges[%d] is 0x%" PRIxLEAST64
                             ", which is not a multiple of VkPhysicalDeviceLimits::nonCoherentAtomSize (0x%" PRIxLEAST64 ").",
                             func_name, i, mem_ranges[i].size, atom_size);

@@ -3016,12 +3016,12 @@ static bool validate_usage_flags(layer_data *device_data, VkFlags actual, VkFlag
             // TODO: Fix callers with msgCode == -1 to use correct validation checks.
             skip =
                 log_msg(report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, get_debug_report_enum[obj_type], obj_handle,
-                        MEMTRACK_INVALID_USAGE_FLAG, "MEM",
+                        MEMTRACK_INVALID_USAGE_FLAG,
                         "Invalid usage flag for %s 0x%" PRIx64 " used by %s. In this case, %s should have %s set during creation.",
                         type_str, obj_handle, func_name, type_str, usage_str);
         } else {
             skip =
-                log_msg(report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, get_debug_report_enum[obj_type], obj_handle, msgCode, "MEM",
+                log_msg(report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, get_debug_report_enum[obj_type], obj_handle, msgCode,
                         "Invalid usage flag for %s 0x%" PRIx64 " used by %s. In this case, %s should have %s set during creation.",
                         type_str, obj_handle, func_name, type_str, usage_str);
         }
