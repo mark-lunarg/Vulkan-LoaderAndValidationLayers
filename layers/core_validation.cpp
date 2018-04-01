@@ -7215,7 +7215,7 @@ static bool ValidateImageBarrierImage(layer_data *device_data, const char *funcN
         if (!sub_image_found) {
             skip |= log_msg(
                 device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT, rp_handle,
-                VALIDATION_ERROR_1b800936, "CORE",
+                VALIDATION_ERROR_1b800936,
                 "%s: Barrier pImageMemoryBarriers[%d].image (0x%" PRIx64
                 ") is not referenced by the VkSubpassDescription for active subpass (%d) of current renderPass (0x%" PRIx64 ").",
                 funcName, img_index, HandleToUint64(img_bar_image), active_subpass, rp_handle);
@@ -7223,14 +7223,14 @@ static bool ValidateImageBarrierImage(layer_data *device_data, const char *funcN
     } else {  // !image_match
         auto const fb_handle = HandleToUint64(fb_state->framebuffer);
         skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_FRAMEBUFFER_EXT,
-                        fb_handle, VALIDATION_ERROR_1b800936, "CORE",
+                        fb_handle, VALIDATION_ERROR_1b800936,
                         "%s: Barrier pImageMemoryBarriers[%d].image (0x%" PRIx64
                         ") does not match an image from the current framebuffer (0x%" PRIx64 ").",
                         funcName, img_index, HandleToUint64(img_bar_image), fb_handle);
     }
     if (img_barrier.oldLayout != img_barrier.newLayout) {
         skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT,
-                        HandleToUint64(cb_state->commandBuffer), VALIDATION_ERROR_1b80093a, "CORE",
+                        HandleToUint64(cb_state->commandBuffer), VALIDATION_ERROR_1b80093a,
                         "%s: As the Image Barrier for image 0x%" PRIx64
                         " is being executed within a render pass instance, oldLayout must equal newLayout yet they are %s and %s.",
                         funcName, HandleToUint64(img_barrier.image), string_VkImageLayout(img_barrier.oldLayout),
@@ -7238,7 +7238,7 @@ static bool ValidateImageBarrierImage(layer_data *device_data, const char *funcN
     } else {
         if (sub_image_found && sub_image_layout != img_barrier.oldLayout) {
             skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT,
-                            rp_handle, VALIDATION_ERROR_1b800938, "CORE",
+                            rp_handle, VALIDATION_ERROR_1b800938,
                             "%s: Barrier pImageMemoryBarriers[%d].image (0x%" PRIx64
                             ") is referenced by the VkSubpassDescription for active subpass (%d) of current renderPass (0x%" PRIx64
                             ") as having layout %s, but image barrier has layout %s.",
@@ -7260,7 +7260,7 @@ static bool ValidateRenderPassImageBarriers(layer_data *device_data, const char 
         const auto &img_src_access_mask = img_barrier.srcAccessMask;
         if (img_src_access_mask != (sub_src_access_mask & img_src_access_mask)) {
             skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT,
-                            rp_handle, VALIDATION_ERROR_1b80092e, "CORE",
+                            rp_handle, VALIDATION_ERROR_1b80092e,
                             "%s: Barrier pImageMemoryBarriers[%d].srcAccessMask(0x%X) is not a subset of VkSubpassDependency "
                             "srcAccessMask(0x%X) of subpass %d of renderPass 0x%" PRIx64 ".",
                             funcName, i, img_src_access_mask, sub_src_access_mask, active_subpass, rp_handle);
@@ -7268,7 +7268,7 @@ static bool ValidateRenderPassImageBarriers(layer_data *device_data, const char 
         const auto &img_dst_access_mask = img_barrier.dstAccessMask;
         if (img_dst_access_mask != (sub_dst_access_mask & img_dst_access_mask)) {
             skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT,
-                            rp_handle, VALIDATION_ERROR_1b800930, "CORE",
+                            rp_handle, VALIDATION_ERROR_1b800930,
                             "%s: Barrier pImageMemoryBarriers[%d].dstAccessMask(0x%X) is not a subset of VkSubpassDependency "
                             "dstAccessMask(0x%X) of subpass %d of renderPass 0x%" PRIx64 ".",
                             funcName, i, img_dst_access_mask, sub_dst_access_mask, active_subpass, rp_handle);
@@ -7276,7 +7276,7 @@ static bool ValidateRenderPassImageBarriers(layer_data *device_data, const char 
         if (VK_QUEUE_FAMILY_IGNORED != img_barrier.srcQueueFamilyIndex ||
             VK_QUEUE_FAMILY_IGNORED != img_barrier.dstQueueFamilyIndex) {
             skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT,
-                            rp_handle, VALIDATION_ERROR_1b80093c, "CORE",
+                            rp_handle, VALIDATION_ERROR_1b80093c,
                             "%s: Barrier pImageMemoryBarriers[%d].srcQueueFamilyIndex is %d and "
                             "pImageMemoryBarriers[%d].dstQueueFamilyIndex is %d but both must be VK_QUEUE_FAMILY_IGNORED.",
                             funcName, i, img_barrier.srcQueueFamilyIndex, i, img_barrier.dstQueueFamilyIndex);
@@ -7312,7 +7312,7 @@ static bool ValidateRenderPassPipelineBarriers(layer_data *device_data, const ch
     if (!rp_state->hasSelfDependency[active_subpass]) {
         skip |=
             log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT, rp_handle,
-                    VALIDATION_ERROR_1b800928, "CORE",
+                    VALIDATION_ERROR_1b800928,
                     "%s: Barriers cannot be set during subpass %d of renderPass 0x%" PRIx64 " with no self-dependency specified.",
                     funcName, active_subpass, rp_handle);
     } else {
@@ -7325,7 +7325,7 @@ static bool ValidateRenderPassPipelineBarriers(layer_data *device_data, const ch
         if ((sub_src_stage_mask != VK_PIPELINE_STAGE_ALL_COMMANDS_BIT) &&
             (src_stage_mask != (sub_src_stage_mask & src_stage_mask))) {
             skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT,
-                            rp_handle, VALIDATION_ERROR_1b80092a, "CORE",
+                            rp_handle, VALIDATION_ERROR_1b80092a,
                             "%s: Barrier srcStageMask(0x%X) is not a subset of VkSubpassDependency srcStageMask(0x%X) of subpass "
                             "%d of renderPass 0x%" PRIx64 ".",
                             funcName, src_stage_mask, sub_src_stage_mask, active_subpass, rp_handle);
@@ -7333,14 +7333,14 @@ static bool ValidateRenderPassPipelineBarriers(layer_data *device_data, const ch
         if ((sub_dst_stage_mask != VK_PIPELINE_STAGE_ALL_COMMANDS_BIT) &&
             (dst_stage_mask != (sub_dst_stage_mask & dst_stage_mask))) {
             skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT,
-                            rp_handle, VALIDATION_ERROR_1b80092c, "CORE",
+                            rp_handle, VALIDATION_ERROR_1b80092c,
                             "%s: Barrier dstStageMask(0x%X) is not a subset of VkSubpassDependency dstStageMask(0x%X) of subpass "
                             "%d of renderPass 0x%" PRIx64 ".",
                             funcName, dst_stage_mask, sub_dst_stage_mask, active_subpass, rp_handle);
         }
         if (0 != buffer_mem_barrier_count) {
             skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT,
-                            rp_handle, VALIDATION_ERROR_1b800934, "CORE",
+                            rp_handle, VALIDATION_ERROR_1b800934,
                             "%s: bufferMemoryBarrierCount is non-zero (%d) for subpass %d of renderPass 0x%" PRIx64 ".", funcName,
                             buffer_mem_barrier_count, active_subpass, rp_handle);
         }
@@ -7350,7 +7350,7 @@ static bool ValidateRenderPassPipelineBarriers(layer_data *device_data, const ch
             const auto &mb_src_access_mask = mem_barriers[i].srcAccessMask;
             if (mb_src_access_mask != (sub_src_access_mask & mb_src_access_mask)) {
                 skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT,
-                                VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT, rp_handle, VALIDATION_ERROR_1b80092e, "CORE",
+                                VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT, rp_handle, VALIDATION_ERROR_1b80092e,
                                 "%s: Barrier pMemoryBarriers[%d].srcAccessMask(0x%X) is not a subset of VkSubpassDependency "
                                 "srcAccessMask(0x%X) of subpass %d of renderPass 0x%" PRIx64 ".",
                                 funcName, i, mb_src_access_mask, sub_src_access_mask, active_subpass, rp_handle);
@@ -7358,7 +7358,7 @@ static bool ValidateRenderPassPipelineBarriers(layer_data *device_data, const ch
             const auto &mb_dst_access_mask = mem_barriers[i].dstAccessMask;
             if (mb_dst_access_mask != (sub_dst_access_mask & mb_dst_access_mask)) {
                 skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT,
-                                VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT, rp_handle, VALIDATION_ERROR_1b800930, "CORE",
+                                VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT, rp_handle, VALIDATION_ERROR_1b800930,
                                 "%s: Barrier pMemoryBarriers[%d].dstAccessMask(0x%X) is not a subset of VkSubpassDependency "
                                 "dstAccessMask(0x%X) of subpass %d of renderPass 0x%" PRIx64 ".",
                                 funcName, i, mb_dst_access_mask, sub_dst_access_mask, active_subpass, rp_handle);
@@ -7368,7 +7368,7 @@ static bool ValidateRenderPassPipelineBarriers(layer_data *device_data, const ch
                                                 sub_src_access_mask, sub_dst_access_mask, image_mem_barrier_count, image_barriers);
         if (sub_dep.dependencyFlags != dependency_flags) {
             skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT,
-                            rp_handle, VALIDATION_ERROR_1b800932, "CORE",
+                            rp_handle, VALIDATION_ERROR_1b800932,
                             "%s: dependencyFlags param (0x%X) does not equal VkSubpassDependency dependencyFlags value (0x%X) for "
                             "subpass %d of renderPass 0x%" PRIx64 ".",
                             funcName, dependency_flags, sub_dep.dependencyFlags, cb_state->activeSubpass, rp_handle);
@@ -9048,7 +9048,7 @@ static bool VerifyRenderAreaBounds(const layer_data *dev_data, const VkRenderPas
         (pRenderPassBegin->renderArea.offset.y + pRenderPassBegin->renderArea.extent.height) > pFramebufferInfo->height) {
         skip |= static_cast<bool>(log_msg(
             dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT, 0,
-            DRAWSTATE_INVALID_RENDER_AREA, "CORE",
+            DRAWSTATE_INVALID_RENDER_AREA,
             "Cannot execute a render pass with renderArea not within the bound of the framebuffer. RenderArea: x %d, y %d, width "
             "%d, height %d. Framebuffer: width %d, height %d.",
             pRenderPassBegin->renderArea.offset.x, pRenderPassBegin->renderArea.offset.y, pRenderPassBegin->renderArea.extent.width,
