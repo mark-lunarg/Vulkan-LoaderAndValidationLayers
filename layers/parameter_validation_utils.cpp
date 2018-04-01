@@ -2211,7 +2211,7 @@ bool pv_vkCreateRenderPass(VkDevice device, const VkRenderPassCreateInfo *pCreat
         if (pCreateInfo->pAttachments[i].finalLayout == VK_IMAGE_LAYOUT_UNDEFINED ||
             pCreateInfo->pAttachments[i].finalLayout == VK_IMAGE_LAYOUT_PREINITIALIZED) {
             skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT, 0,
-                            VALIDATION_ERROR_00800696, "DL",
+                            VALIDATION_ERROR_00800696,
                             "pCreateInfo->pAttachments[%d].finalLayout must not be VK_IMAGE_LAYOUT_UNDEFINED or "
                             "VK_IMAGE_LAYOUT_PREINITIALIZED.",
                             i);
@@ -2221,7 +2221,7 @@ bool pv_vkCreateRenderPass(VkDevice device, const VkRenderPassCreateInfo *pCreat
     for (uint32_t i = 0; i < pCreateInfo->subpassCount; ++i) {
         if (pCreateInfo->pSubpasses[i].colorAttachmentCount > max_color_attachments) {
             skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT, 0,
-                            VALIDATION_ERROR_1400069a, "DL",
+                            VALIDATION_ERROR_1400069a,
                             "Cannot create a render pass with %d color attachments. Max is %d.",
                             pCreateInfo->pSubpasses[i].colorAttachmentCount, max_color_attachments);
         }
