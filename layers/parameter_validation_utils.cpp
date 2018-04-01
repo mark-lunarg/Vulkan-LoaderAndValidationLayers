@@ -2206,7 +2206,7 @@ bool pv_vkCreateRenderPass(VkDevice device, const VkRenderPassCreateInfo *pCreat
             std::stringstream ss;
             ss << "vkCreateRenderPass: pCreateInfo->pAttachments[" << i << "].format is VK_FORMAT_UNDEFINED. ";
             skip |= log_msg(device_data->report_data, VK_DEBUG_REPORT_WARNING_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT, 0,
-                            VALIDATION_ERROR_00809201, "IMAGE", "%s", ss.str().c_str());
+                            VALIDATION_ERROR_00809201, "%s", ss.str().c_str());
         }
         if (pCreateInfo->pAttachments[i].finalLayout == VK_IMAGE_LAYOUT_UNDEFINED ||
             pCreateInfo->pAttachments[i].finalLayout == VK_IMAGE_LAYOUT_PREINITIALIZED) {
