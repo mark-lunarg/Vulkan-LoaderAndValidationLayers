@@ -3824,7 +3824,7 @@ static bool ValidateMemoryTypes(const layer_data *dev_data, const DEVICE_MEM_INF
     bool skip = false;
     if (((1 << mem_info->alloc_info.memoryTypeIndex) & memory_type_bits) == 0) {
         skip = log_msg(dev_data->report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
-                       HandleToUint64(mem_info->mem), msgCode, "MT",
+                       HandleToUint64(mem_info->mem), msgCode,
                        "%s(): MemoryRequirements->memoryTypeBits (0x%X) for this object type are not compatible with the memory "
                        "type (0x%X) of this memory object 0x%" PRIx64 ".",
                        funcName, memory_type_bits, mem_info->alloc_info.memoryTypeIndex, HandleToUint64(mem_info->mem));
@@ -9908,7 +9908,7 @@ static bool PreCallValidateQueueBindSparse(layer_data *dev_data, VkQueue queue, 
             if (!image_state->get_sparse_reqs_called || image_state->sparse_requirements.empty()) {
                 // For now just warning if sparse image binding occurs without calling to get reqs first
                 return log_msg(dev_data->report_data, VK_DEBUG_REPORT_WARNING_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT,
-                               HandleToUint64(image_state->image), MEMTRACK_INVALID_STATE, "CV",
+                               HandleToUint64(image_state->image), MEMTRACK_INVALID_STATE,
                                "vkQueueBindSparse(): Binding sparse memory to image 0x%" PRIx64
                                " without first calling vkGetImageSparseMemoryRequirements[2KHR]() to retrieve requirements.",
                                HandleToUint64(image_state->image));
@@ -9925,7 +9925,7 @@ static bool PreCallValidateQueueBindSparse(layer_data *dev_data, VkQueue queue, 
             if (!image_state->get_sparse_reqs_called || image_state->sparse_requirements.empty()) {
                 // For now just warning if sparse image binding occurs without calling to get reqs first
                 return log_msg(dev_data->report_data, VK_DEBUG_REPORT_WARNING_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT,
-                               HandleToUint64(image_state->image), MEMTRACK_INVALID_STATE, "CV",
+                               HandleToUint64(image_state->image), MEMTRACK_INVALID_STATE,
                                "vkQueueBindSparse(): Binding opaque sparse memory to image 0x%" PRIx64
                                " without first calling vkGetImageSparseMemoryRequirements[2KHR]() to retrieve requirements.",
                                HandleToUint64(image_state->image));
@@ -9935,7 +9935,7 @@ static bool PreCallValidateQueueBindSparse(layer_data *dev_data, VkQueue queue, 
             if (sparse_image_state->sparse_metadata_required && !sparse_image_state->sparse_metadata_bound) {
                 // Warn if sparse image binding metadata required for image with sparse binding, but metadata not bound
                 return log_msg(dev_data->report_data, VK_DEBUG_REPORT_WARNING_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT,
-                               HandleToUint64(sparse_image_state->image), MEMTRACK_INVALID_STATE, "CV",
+                               HandleToUint64(sparse_image_state->image), MEMTRACK_INVALID_STATE,
                                "vkQueueBindSparse(): Binding sparse memory to image 0x%" PRIx64
                                " which requires a metadata aspect but no binding with VK_IMAGE_ASPECT_METADATA_BIT set was made.",
                                HandleToUint64(sparse_image_state->image));
