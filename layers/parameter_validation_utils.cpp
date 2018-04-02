@@ -51,7 +51,7 @@
 
 #if defined __ANDROID__
 #include <android/log.h>
-#define LOGCONSOLE(...) ((void)__android_log_print(ANDROID_LOG_INFO, __VA_ARGS__))
+#define LOGCONSOLE(...) ((void)__android_log_print(ANDROID_LOG_INFO, "PARAMETER_VALIDATION", __VA_ARGS__))
 #else
 #define LOGCONSOLE(...)      \
     {                        \
