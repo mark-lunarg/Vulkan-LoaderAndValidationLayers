@@ -151,7 +151,6 @@ struct LogMiscParams {
     const debug_report_data *debug_data;
     VkDebugReportObjectTypeEXT objectType;
     uint64_t srcObject;
-    const char *pLayerPrefix;
     const char *api_name;
 };
 
@@ -176,7 +175,7 @@ bool ValidateGreaterThan(const T value, const T lower_bound, const ParameterName
         std::ostringstream ss;
         ss << misc.api_name << ": parameter " << parameter_name.get_name() << " (= " << value << ") is greater than " << lower_bound;
         skip_call |= log_msg(misc.debug_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, misc.objectType, misc.srcObject, vuid,
-                             misc.pLayerPrefix, "%s", ss.str().c_str());
+                             "%s", ss.str().c_str());
     }
 
     return skip_call;
@@ -666,7 +665,6 @@ bool validate_ranged_enum(debug_report_data *report_data, const char *apiName, c
 
     if (std::find(valid_values.begin(), valid_values.end(), value) == valid_values.end()) {
         skip |= log_msg(report_data, VK_DEBUG_REPORT_ERROR_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT, 0, vuid,
-                       
                         "%s: value of %s (%d) does not fall within the begin..end range of the core %s enumeration tokens and is "
                         "not an extension added token.",
                         apiName, parameterName.get_name().c_str(), value, enumName);
