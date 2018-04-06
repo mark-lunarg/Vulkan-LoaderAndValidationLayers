@@ -577,8 +577,15 @@ static bool IsReleaseOp(layer_data *device_data, GLOBAL_CB_NODE *cb_state, VkIma
     return pool && IsReleaseOp<VkImageMemoryBarrier, true>(pool, barrier);
 }
 
+static bool IsAcquireOp(layer_data *device_data, GLOBAL_CB_NODE *cb_state, VkImageMemoryBarrier const *barrier) {
+    if (!IsTransferOp(barrier)) return false;
+
+    auto pool = GetCommandPoolNode(device_data, cb_state->createInfo.commandPool);
+    return pool && IsAcquireOp<VkImageMemoryBarrier, true>(pool, barrier);
+}
+
 void TransitionImageLayouts(layer_data *device_data, GLOBAL_CB_NODE *cb_state, uint32_t memBarrierCount,
-                            const VkImageMemoryBarrier *pImgMemBarriers) {
+                            const VkImageMemoryBarrier *pImgMemBarriers, const char *caller) {
     for (uint32_t i = 0; i < memBarrierCount; ++i) {
         auto mem_barrier = &pImgMemBarriers[i];
         if (!mem_barrier) continue;
@@ -591,7 +598,56 @@ void TransitionImageLayouts(layer_data *device_data, GLOBAL_CB_NODE *cb_state, u
         // transition, but it must not be performed twice. We'll arbitrarily
         // choose to perform it as part of the acquire operation.
         if (IsReleaseOp(device_data, cb_state, mem_barrier)) {
+            auto image = mem_barrier->image;
+            auto pool = GetCommandPoolNode(device_data, cb_state->createInfo.commandPool);
+            assert(pool);
+            if (mem_barrier->oldLayout != mem_barrier->newLayout) {
+                log_msg(GetReportData(device_data), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT,
+                        HandleToUint64(image), 0,
+                        "%s: Releasing image 0x%" PRIx64 " from queue family %" PRIu32 " with srcQueueFamilyIndex (%" PRIu32
+                        ") and dstQueueFamilyIndex (%" PRIu32 ") with layout transition from %s to %s. (deferred)",
+                        caller, HandleToUint64(image), pool->queueFamilyIndex, mem_barrier->srcQueueFamilyIndex,
+                        mem_barrier->dstQueueFamilyIndex, string_VkImageLayout(mem_barrier->oldLayout),
+                        string_VkImageLayout(mem_barrier->newLayout));
+
+            } else {
+                log_msg(GetReportData(device_data), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT,
+                        HandleToUint64(image), 0,
+                        "%s: Releasing image 0x%" PRIx64 " from queue family %" PRIu32 " with srcQueueFamilyIndex (%" PRIu32
+                        ") and dstQueueFamilyIndex (%" PRIu32 ")",
+                        caller, HandleToUint64(image), pool->queueFamilyIndex, mem_barrier->srcQueueFamilyIndex,
+                        mem_barrier->dstQueueFamilyIndex);
+            }
             continue;
+        } else if (IsAcquireOp(device_data, cb_state, mem_barrier)) {
+            auto image = mem_barrier->image;
+            auto pool = GetCommandPoolNode(device_data, cb_state->createInfo.commandPool);
+            assert(pool);
+            if (mem_barrier->oldLayout != mem_barrier->newLayout) {
+                log_msg(GetReportData(device_data), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT,
+                        HandleToUint64(image), 0,
+                        "%s: Acquiring image 0x%" PRIx64 " for queue family %" PRIu32 " with srcQueueFamilyIndex (%" PRIu32
+                        ") and dstQueueFamilyIndex (%" PRIu32 ") with layout transition from %s to %s. (performed)",
+                        caller, HandleToUint64(image), pool->queueFamilyIndex, mem_barrier->srcQueueFamilyIndex,
+                        mem_barrier->dstQueueFamilyIndex, string_VkImageLayout(mem_barrier->oldLayout),
+                        string_VkImageLayout(mem_barrier->newLayout));
+            } else {
+                log_msg(GetReportData(device_data), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT,
+                        HandleToUint64(image), 0,
+                        "%s: Acquiring image 0x%" PRIx64 " for queue family %" PRIu32 " with srcQueueFamilyIndex (%" PRIu32
+                        ") and dstQueueFamilyIndex (%" PRIu32 ")",
+                        caller, HandleToUint64(image), pool->queueFamilyIndex, mem_barrier->srcQueueFamilyIndex,
+                        mem_barrier->dstQueueFamilyIndex);
+            }
+        } else if (mem_barrier->oldLayout != mem_barrier->newLayout) {
+            auto image = mem_barrier->image;
+            log_msg(GetReportData(device_data), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT,
+                    HandleToUint64(image), 0,
+                    "%s: Transitioning image 0x%" PRIx64 " layout from %s to %s, with srcQueueFamilyIndex (%" PRIu32
+                    ") and dstQueueFamilyIndex (%" PRIu32 ")",
+                    caller, HandleToUint64(image), string_VkImageLayout(mem_barrier->oldLayout),
+                    string_VkImageLayout(mem_barrier->newLayout), mem_barrier->srcQueueFamilyIndex,
+                    mem_barrier->dstQueueFamilyIndex);
         }
 
         VkImageCreateInfo *image_create_info = &(GetImageState(device_data, mem_barrier->image)->createInfo);

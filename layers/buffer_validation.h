@@ -122,7 +122,7 @@ bool ValidateBarriersToImages(layer_data *device_data, GLOBAL_CB_NODE const *cb_
                               const VkImageMemoryBarrier *pImageMemoryBarriers, const char *func_name);
 
 void TransitionImageLayouts(layer_data *device_data, GLOBAL_CB_NODE *cb_state, uint32_t memBarrierCount,
-                            const VkImageMemoryBarrier *pImgMemBarriers);
+                            const VkImageMemoryBarrier *pImgMemBarriers, const char *caller);
 
 bool VerifySourceImageLayout(layer_data *dev_data, GLOBAL_CB_NODE *cb_node, VkImage srcImage, VkImageSubresourceLayers subLayers,
                              VkImageLayout srcImageLayout, UNIQUE_VALIDATION_ERROR_CODE msgCode);
